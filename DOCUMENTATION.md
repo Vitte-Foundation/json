@@ -13,8 +13,8 @@ vérifier sur le dépôt ; le code ci-dessous et les sources de la révision
 courante font foi pour l’API.
 
 Le module est écrit en Vitte. Il n’utilise pas de bibliothèque C externe ni de
-dépendance native. Le répertoire `modules/json` contient les sources de la
-bibliothèque, ses tests et son manifeste de paquet.
+dépendance native. Ce dépôt autonome contient les sources de la bibliothèque,
+ses tests, son guide et son manifeste de paquet.
 
 ---
 
@@ -49,18 +49,18 @@ sont disponibles pour les outils avancés.
 
 ### 2.1 Vérifier et tester
 
-Depuis la racine du dépôt :
+Depuis la racine de ce dépôt, avec un compilateur Vitte accessible :
 
 ```sh
-make -C modules/json check
-make -C modules/json check-library
-make -C modules/json test-vitte
+make VITTE=/chemin/vers/vitte check
+make VITTE=/chemin/vers/vitte check-library
+make VITTE=/chemin/vers/vitte test-vitte
 ```
 
 Les suites détaillées sont disponibles avec :
 
 ```sh
-make -C modules/json test-encode test-runtime test-invalid test-parse \
+make VITTE=/chemin/vers/vitte test-encode test-runtime test-invalid test-parse \
     test-roundtrip test-string-concat test-unicode
 ```
 
@@ -83,7 +83,7 @@ Installation dans une image ou un paquet :
 ```sh
 make install \
     PREFIX=/usr/local \
-    DESTDIR="$PWD/modules/json/build/stage"
+    DESTDIR="$PWD/build/stage"
 ```
 
 Le module est installé dans :
@@ -1133,18 +1133,18 @@ Les commentaires ne font pas partie de JSON standard et sont refusés.
 Commandes utiles :
 
 ```sh
-make -C modules/json check
-make -C modules/json check-library
-make -C modules/json check-tests
-make -C modules/json test-runtime
-make -C modules/json test-encode
-make -C modules/json test-invalid
-make -C modules/json test-parse
-make -C modules/json test-roundtrip
-make -C modules/json test-string-concat
-make -C modules/json test-unicode
-make -C modules/json test-vitte
-make -C modules/json verify
+make VITTE=/chemin/vers/vitte check
+make VITTE=/chemin/vers/vitte check-library
+make VITTE=/chemin/vers/vitte check-tests
+make VITTE=/chemin/vers/vitte test-runtime
+make VITTE=/chemin/vers/vitte test-encode
+make VITTE=/chemin/vers/vitte test-invalid
+make VITTE=/chemin/vers/vitte test-parse
+make VITTE=/chemin/vers/vitte test-roundtrip
+make VITTE=/chemin/vers/vitte test-string-concat
+make VITTE=/chemin/vers/vitte test-unicode
+make VITTE=/chemin/vers/vitte test-vitte
+make VITTE=/chemin/vers/vitte verify
 ```
 
 | Fichier | Couverture |
@@ -1168,7 +1168,7 @@ pas installés. L’API maintenue du parser et de l’encodeur se trouve dans
 
 Pour ajouter une fonction publique : choisir le bon espace, documenter le
 contrat, représenter explicitement les erreurs, tester le cas nominal et les
-cas limites, puis lancer `make -C modules/json verify`.
+cas limites, puis lancer `make VITTE=/chemin/vers/vitte verify`.
 
 ---
 
@@ -1303,3 +1303,15 @@ erreur au bon endroit et relier plusieurs occurrences d’un même problème.
 Le réflexe à retenir est simple : parser explicitement, vérifier le résultat,
 inspecter les types, valider les contraintes métier et vérifier le résultat de
 l’encodage avant d’utiliser le texte produit.
+
+---
+
+## 21. Archive officielle 0.1.1
+
+La version `0.1.1` est publiée sous le tag immuable
+[`v0.1.1`](https://github.com/Vitte-Foundation/json/releases/tag/v0.1.1).
+Téléchargez `vitte-json-0.1.1.tar.gz` et son fichier `.sha256` depuis cette
+page, puis vérifiez la somme avant extraction. L’archive contient le manifeste,
+la licence, le Makefile, cette documentation, les sources installées et les
+tests maintenus. Elle exclut les répertoires de compilation et les brouillons
+internes non installés.

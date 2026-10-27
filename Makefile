@@ -2,9 +2,7 @@
 # Vitte JSON Module
 # ============================================================================
 #
-# Build, validation and test orchestration for:
-#
-#   modules/json
+# Build, validation and test orchestration for the standalone json package.
 #
 # The JSON implementation itself is written in Vitte.
 #
@@ -40,7 +38,7 @@ ROOT_DIR := .
 BUILD_DIR := $(ROOT_DIR)/build
 TMP_DIR   := $(BUILD_DIR)/tmp
 LOG_DIR   := $(BUILD_DIR)/logs
-INSTALL_TEST_ROOT := $(abspath ../../build/modules-json-installed-test)
+INSTALL_TEST_ROOT := $(abspath $(BUILD_DIR)/installed-test-root)
 INSTALL_TEST_PREFIX := /opt/vitte
 INSTALL_TEST_MODULE_ROOT := $(INSTALL_TEST_ROOT)$(INSTALL_TEST_PREFIX)/share/vitte/modules
 
@@ -48,7 +46,7 @@ INSTALL_TEST_MODULE_ROOT := $(INSTALL_TEST_ROOT)$(INSTALL_TEST_PREFIX)/share/vit
 # Vitte compiler
 # ----------------------------------------------------------------------------
 
-VITTE ?= ../../build/bin/vitte
+VITTE ?= $(if $(wildcard ../../build/bin/vitte),../../build/bin/vitte,$(shell command -v vitte 2>/dev/null))
 
 VITTE_FLAGS ?=
 

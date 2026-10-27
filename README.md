@@ -1,90 +1,58 @@
-# Vitte JSON module
+# Module JSON pour Vitte
 
-Pour la documentation complète et humanisée, consulter
-[DOCUMENTATION.md](DOCUMENTATION.md). Elle couvre l’installation, les imports,
-le modèle `JsonValue`, le lexer, le parser, l’encodeur, les diagnostics,
-l’Unicode, les nombres, la sécurité et les tests.
+Le module `json` fournit un lexer, un parser strict, une représentation
+`JsonValue`, des diagnostics structurés et un encodeur JSON. Il est écrit en
+Vitte et n’a aucune dépendance native.
 
-Le guide de consultation est aussi disponible sur le site :
-[Documentation du module JSON](https://vitte-lang.org/reference/json/).
-Les éditions PDF multilingues jointes à l’issue
-[#17](https://github.com/vitte-lang/vitte/issues/17) sont des ressources
-complémentaires ; vérifier leurs signatures et commandes contre le code de
-cette révision avant de les utiliser comme référence d’API.
+La release officielle est **0.1.1**. Elle est associée au tag immuable
+[`v0.1.1`](https://github.com/Vitte-Foundation/json/releases/tag/v0.1.1).
+L’archive et sa somme SHA-256 sont jointes à cette release. Le guide complet
+se trouve dans [DOCUMENTATION.md](DOCUMENTATION.md), et la référence en ligne
+sur [vitte-lang.org](https://vitte-lang.org/reference/json/).
 
-`json` is a Vitte source package laid out under the `json` namespace. Module
-paths use `::`, as required by the Vitte grammar. For example:
+## Installation depuis l’archive
 
-```vitte
-use json::error::position::{JsonPosition, start};
-
-let origin: JsonPosition = start();
-```
-
-The source tree includes value, lexer, parser, encoder, and error/position
-modules. The package currently has no native C ABI or native runtime files;
-`runtime/numeric.vit` is Vitte source.
-
-## Diagnostics for beginners
-
-Lexer results expose `error.message`; parser results expose `report.message`.
-Both include `suggestion` for an optional, beginner-friendly correction. A
-suggestion is intentionally empty when the module cannot infer a safe fix.
-Suggestions describe the correction; they do not modify the input
-automatically. If lexing fails during `parse` or `parse_with_limits`, the
-parser preserves the lexer message, detail, suggestion, and span, and sets
-`report.error` to `JsonParserError.InvalidTokenStream`. Call `lex` or
-`lex_with_limits` directly when the specific `JsonLexerError` is needed.
-
-For untrusted or size-constrained input, configure both lexer and parser
-budgets with `new_lexer_limits`, `new_parser_limits`, and
-`parse_strict_with_limits`. The parser limits cover nesting depth, total
-values, array elements, object members, key length, and duplicate-key policy;
-the lexer limits cover source size, token count, string length, and number
-length. The detailed guide includes an example and the default values.
-
-## Build and install
-
-From the repository root:
+Téléchargez `vitte-json-0.1.1.tar.gz` depuis la
+[release 0.1.1](https://github.com/Vitte-Foundation/json/releases/tag/v0.1.1),
+vérifiez le fichier `.sha256` joint, puis extrayez et installez le paquet :
 
 ```sh
-make -C modules/json check
-make -C modules/json test-vitte
+tar -xzf vitte-json-0.1.1.tar.gz
+cd vitte-json-0.1.1
+make VITTE=/chemin/vers/vitte verify
 make install PREFIX="$HOME/.local"
 ```
 
-`test-vitte` stages a compiler installation, then compiles and runs a consumer
-that imports the parser and encoder, parses a JSON object, and checks its
-compact encoding from the installed source tree.
-Normal `make install` installs the compiler and JSON source tree under
-`$PREFIX/share/vitte/modules/json`; `make uninstall` removes both. A staged
-installation can be made with `DESTDIR`, for example:
+Le Makefile détecte un compilateur `vitte` dans le `PATH` ; le paramètre
+`VITTE` permet de donner son chemin complet si nécessaire. Le module est installé dans
+`$HOME/.local/share/vitte/modules/json`. Pour une installation en staging :
 
 ```sh
-make install PREFIX=/usr/local DESTDIR="$PWD/modules/json/build/stage"
+make install PREFIX=/usr/local DESTDIR="$PWD/build/stage"
 ```
 
-An installed compiler searches the module directory beside its own `bin`
-directory. Additional module roots can be provided through `VITTE_MODULE_PATH`,
-separated by the host path-list separator (`:` on Unix and `;` on Windows). This
-is useful for development or a compiler invoked via a custom wrapper.
+Le parent `share/vitte/modules` peut être ajouté à `VITTE_MODULE_PATH` si le
+compilateur ne le découvre pas automatiquement :
 
-## Current compiler compatibility
+```sh
+export VITTE_MODULE_PATH="$HOME/.local/share/vitte/modules"
+```
 
-The current bootstrap is Vitte 0.1.1. `make test-vitte` stages the package,
-then compiles and runs a consumer of the installed parser and encoder API.
-`make test-parse` compiles and runs the parser suite, including configurable
-resource limits.
+## Compatibilité et vérification
 
-The checkout retains unexported parser drafts in `parser/array.vit`,
-`parser/object.vit`, and `parser/value.vit`, along with a duplicate escaping
-draft in `encode/escape.vit`. They remain outside source checks and package
-installs; `json::parser::parser` and `json::encode::encoder` are the maintained
-APIs. `make test-string-concat` verifies dynamic string concatenation with the
-current bootstrap.
+Cette version a été vérifiée avec le bootstrap Vitte 0.1.1. Depuis la racine
+du paquet, lancez `make VITTE=/chemin/vers/vitte verify`. Cette cible vérifie
+la disposition, installe le module dans un répertoire temporaire, compile et
+exécute un consommateur du parser et de l’encodeur, puis vérifie la
+concaténation de chaînes.
 
-The root `make install` and Raspberry Pi installer install the JSON source
-module through the module install target.
+Les sources internes conservées comme brouillons dans le dépôt ne sont pas
+installées. Les API maintenues du parser et de l’encodeur sont
+`json::parser::parser` et `json::encode::encoder`.
 
-`package.toml` records package identity and layout. The compiler does not yet
-consume this manifest or provide a general package manager.
+Le compilateur ne fournit pas encore de commande générale `vitte install` ;
+utilisez l’archive versionnée et les instructions ci-dessus.
+
+## Licence
+
+Distribué sous la [VitteFoundation Public License 1.0](LICENSE).
